@@ -1,0 +1,77 @@
+# rayjob-marl.yaml
+apiVersion: ray.io/v1alpha1
+kind: RayJob
+metadata:
+  name: marl-batch-job # Name for your RayJob resource
+spec:
+  # ----- Job Submission Settings -----
+  # The command to execute on the Ray head pod once the cluster is ready.
+  # Assumes marl_script.py is in the WORKDIR defined in the Dockerfile (/home/ray/marl_job).
+  entrypoint: python /home/ray/marl_job/marl_script.py
+
+  # Automatically delete the RayCluster when the job finishes (succeeds or fails)
+  shutdownAfterJobFinishes: true
+
+  # Optional: How long to keep the RayCluster running after the job finishes.
+  # Useful for debugging or inspecting logs before automatic deletion.
+  # Set to 0 for immediate deletion upon completion.
+  ttlSecondsAfterFinished: 300 # Keep cluster for 5 minutes after job end
+
+  # Optional: Define runtime environment inline (less common for complex dependencies)
+  # See Ray documentation for 'runtime_env' structure if needed. Usually better to bake into image.
+  # runtimeEnvYAML: |
+  #   pip:
+  #     - pettingzoo[mpe]
+  #     - pygame
+  #   working_dir: /home/ray/marl_job # Must match location expected by entrypoint
+
+  # ----- Ray Cluster Configuration -----
+  # This section defines the RayCluster that will be created specifically for this job.
+  # It's the same structure as the 'spec' section of a RayCluster object.
+  rayClusterSpec:
+    rayVersion: '2.9.3' # Match the version in your Docker image and script dependencies
+    # --- Head node configuration ---
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: '0.0.0.0' # Still useful if you want to potentially access dashboard during the job run
+        # block: 'true' # Usually not needed for RayJob as job determines lifetime
+      template:
+        spec:
+          containers:
+          - name: ray-head
+            # Use the custom image you built and pushed
+            image: harbor.rackspace.koski.co/library/ray-worker:latest # *** CHANGE THIS ***
+            ports:
+            - containerPort: 6379
+              name: gcs-server
+            - containerPort: 8265
+              name: dashboard
+            - containerPort: 10001
+              name: client
+            resources:
+              limits:
+                cpu: "2"
+                memory: "4Gi"
+              requests:
+                cpu: "1"
+                memory: "2Gi"
+    # --- Worker node configuration ---
+    workerGroupSpecs:
+    - replicas: 2 # Number of worker pods (should match/exceed num_rollout_workers in script)
+      minReplicas: 1
+      maxReplicas: 5
+      groupName: small-group
+      rayStartParams: {}
+      template:
+        spec:
+          containers:
+          - name: ray-worker
+             # Use the same custom image
+            image: harbor.rackspace.koski.co/library/ray-worker:latest # *** CHANGE THIS ***
+            resources:
+              limits:
+                cpu: "2"
+                memory: "4Gi"
+              requests:
+                cpu: "1"
+                memory: "2Gi"

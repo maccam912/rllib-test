@@ -7,7 +7,7 @@ WORKDIR /home/ray/marl_job
 
 # Install PettingZoo and dependencies
 # RUN pip install --no-cache-dir "pettingzoo[mpe]==1.23.1" pygame # Specify versions if needed
-RUN pip install --no-cache-dir "pettingzoo[mpe]" pygame "ray[rllib]"
+RUN pip install --no-cache-dir "pettingzoo[mpe]" pygame "ray[all]"
 
 # Copy your script into the image
 COPY marl_script.py .
