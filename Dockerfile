@@ -1,6 +1,6 @@
 # Use a base Ray image matching the version you want
-#FROM rayproject/ray-ml:2.9.3
-FROM python:3.10-slim
+FROM rayproject/ray:2.44.1
+# FROM python:3.10-slim
 
 # Set working directory (optional, but good practice)
 WORKDIR /home/ray/marl_job

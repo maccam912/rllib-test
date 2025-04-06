@@ -29,7 +29,7 @@ spec:
   # This section defines the RayCluster that will be created specifically for this job.
   # It's the same structure as the 'spec' section of a RayCluster object.
   rayClusterSpec:
-    rayVersion: '2.9.3' # Match the version in your Docker image and script dependencies
+    rayVersion: '2.44.1' # Match the version in your Docker image and script dependencies
     # --- Head node configuration ---
     headGroupSpec:
       rayStartParams:
