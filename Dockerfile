@@ -6,8 +6,8 @@ FROM rayproject/ray:2.44.1
 WORKDIR /home/ray/marl_job
 
 # Install PettingZoo and dependencies
-# RUN pip install --no-cache-dir "pettingzoo[mpe]==1.23.1" pygame # Specify versions if needed
-RUN pip install --no-cache-dir "pettingzoo[mpe]" pygame "ray[all]"
+# Since we're on CPUs, install cpu version of torch
+RUN pip install --no-cache-dir torch --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Copy your script into the image
 COPY marl_script.py .
