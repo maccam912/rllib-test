@@ -1,12 +1,13 @@
 # Use a base Ray image matching the version you want
-FROM rayproject/ray-ml:2.9.3
+#FROM rayproject/ray-ml:2.9.3
+FROM python:3.10-slim
 
 # Set working directory (optional, but good practice)
 WORKDIR /home/ray/marl_job
 
 # Install PettingZoo and dependencies
 # RUN pip install --no-cache-dir "pettingzoo[mpe]==1.23.1" pygame # Specify versions if needed
-RUN pip install --no-cache-dir "pettingzoo[mpe]" pygame
+RUN pip install --no-cache-dir "pettingzoo[mpe]" pygame "ray[rllib]"
 
 # Copy your script into the image
 COPY marl_script.py .
