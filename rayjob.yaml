@@ -57,9 +57,9 @@ spec:
                 memory: "2Gi"
     # --- Worker node configuration ---
     workerGroupSpecs:
-    - replicas: 2 # Number of worker pods (should match/exceed num_rollout_workers in script)
+    - replicas: 32 # Number of worker pods (should match/exceed num_rollout_workers in script)
       minReplicas: 1
-      maxReplicas: 5
+      maxReplicas: 32 
       groupName: small-group
       rayStartParams: {}
       template:
